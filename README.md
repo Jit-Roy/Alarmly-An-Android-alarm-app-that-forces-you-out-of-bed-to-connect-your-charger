@@ -3,6 +3,14 @@
 ## Overview
 A unique Android alarm app built with Jetpack Compose that can only be dismissed by connecting the device to a charger. No swipe-to-dismiss functionality exists, making it impossible to snooze or dismiss without plugging in the charger.
 
+## Screenshots
+
+<p align="center">
+  <img src="Images/Alarm_List.png" width="250" alt="Alarm List Screen"/>
+  <img src="Images/Create_Alarm.png" width="250" alt="Create Alarm Screen"/>
+  <img src="Images/Phone_Ringing.png" width="250" alt="Phone Ringing Screen"/>
+</p>
+
 ## Features Implemented
 
 ### 1. **Data Layer**
@@ -108,56 +116,3 @@ Configured permissions for:
 
 ## Unique Selling Point
 Unlike traditional alarms that can be swiped away or use math problems, this alarm ONLY stops when you physically connect your device to a charger. This forces you to get out of bed and plug in your phone, ensuring you're awake!
-
-## Files Created/Modified
-
-### Data Layer
-- `data/local/AlarmEntity.kt`
-- `data/local/AlarmDao.kt`
-- `data/local/AlarmDatabase.kt`
-- `data/local/Converters.kt`
-- `data/repository/AlarmRepository.kt`
-
-### Alarm System
-- `alarm/AlarmScheduler.kt`
-- `alarm/AlarmReceiver.kt`
-- `alarm/AlarmService.kt`
-- `alarm/BootReceiver.kt`
-
-### ViewModels
-- `ui/viewmodel/AlarmListViewModel.kt`
-- `ui/viewmodel/AlarmDetailViewModel.kt`
-
-### UI Screens
-- `ui/screens/AlarmRingingScreen.kt`
-- `ui/screens/AlarmListScreen.kt`
-- `ui/screens/AlarmDetailScreen.kt`
-
-### Navigation
-- `ui/navigation/Screen.kt`
-- `ui/navigation/AlarmlyNavHost.kt`
-
-### Configuration
-- `app/build.gradle.kts` - Added dependencies
-- `gradle/libs.versions.toml` - Added version catalogs
-- `AndroidManifest.xml` - Added permissions and components
-- `MainActivity.kt` - Navigation setup
-
-## Next Steps (Optional Enhancements)
-1. Add custom alarm sound picker
-2. Add snooze duration picker dialog
-3. Add alarm label/name feature
-4. Add alarm history/statistics
-5. Add different dismiss methods (e.g., shake, NFC tag)
-6. Add gradual volume increase
-7. Add weather integration for display
-8. Add sleep statistics
-
-## Testing the App
-1. Create an alarm for 1-2 minutes in the future
-2. Wait for the alarm to trigger
-3. You'll see the ringing screen with moon/clouds
-4. Try swiping or pressing back (it won't dismiss)
-5. Connect your phone to a charger
-6. The alarm will automatically stop!
-
