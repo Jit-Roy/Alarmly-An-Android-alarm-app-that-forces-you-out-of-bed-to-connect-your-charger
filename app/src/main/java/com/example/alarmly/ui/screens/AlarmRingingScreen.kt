@@ -1,19 +1,19 @@
 package com.example.alarmly.ui.screens
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.alarmly.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +28,15 @@ fun AlarmRingingScreen(
 
     // Update time every second
     var currentTime by remember { mutableStateOf(SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())) }
+
+    // Determine if it's day or night (6 AM to 6 PM is day, otherwise night)
+    val greetingText by remember {
+        derivedStateOf {
+            val calendar = Calendar.getInstance()
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            if (hour in 6..17) "Good Day" else "Good Night"
+        }
+    }
 
     // Monitor charging state
     LaunchedEffect(Unit) {
@@ -60,181 +69,55 @@ fun AlarmRingingScreen(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1a1a1a),  // Dark gray top
-                        Color(0xFF000000)   // Black bottom
-                    )
-                )
-            ),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+        // Background image - alarm_ringing.png
+        Image(
+            painter = painterResource(id = R.drawable.alarm_ringing),
+            contentDescription = "Alarm Ringing Background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // Content overlay - main content centered
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
-
-            // Good Night text
-            Text(
-                text = "Good Night",
-                color = Color.White,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            // Current time - Large display
-            Text(
-                text = currentTime,
-                color = Color.White,
-                fontSize = 84.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-                modifier = Modifier.padding(bottom = 60.dp)
-            )
-
-            // Moon and clouds illustration - MATCHING YOUR DESIGN
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-                    .padding(horizontal = 32.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                val width = size.width
-                val height = size.height
-                val centerX = width / 2f
-
-                // Large crescent moon in center (like your design)
-                val moonRadius = width * 0.28f
-                val moonCenterY = height * 0.35f
-
-                // Full moon circle
-                drawCircle(
-                    color = Color(0xFFE8E8E8),  // Light gray moon
-                    radius = moonRadius,
-                    center = Offset(centerX, moonCenterY)
+                // Dynamic greeting text
+                Text(
+                    text = greetingText,
+                    color = Color.White,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                // Shadow to create crescent shape
-                drawCircle(
-                    color = Color(0xFF1a1a1a),  // Dark shadow
-                    radius = moonRadius * 0.85f,
-                    center = Offset(centerX + moonRadius * 0.4f, moonCenterY - moonRadius * 0.15f)
-                )
-
-                // Bottom cloud layers (stylized like your design)
-                // Left bottom cloud
-                val leftCloudPath = Path().apply {
-                    moveTo(0f, height * 0.75f)
-
-                    // First bump
-                    cubicTo(
-                        width * 0.05f, height * 0.65f,
-                        width * 0.1f, height * 0.6f,
-                        width * 0.18f, height * 0.6f
-                    )
-
-                    // Second bump
-                    cubicTo(
-                        width * 0.22f, height * 0.6f,
-                        width * 0.25f, height * 0.55f,
-                        width * 0.3f, height * 0.55f
-                    )
-
-                    // Third bump
-                    cubicTo(
-                        width * 0.35f, height * 0.55f,
-                        width * 0.38f, height * 0.58f,
-                        width * 0.42f, height * 0.62f
-                    )
-
-                    lineTo(width * 0.42f, height)
-                    lineTo(0f, height)
-                    close()
-                }
-
-                drawPath(
-                    path = leftCloudPath,
-                    color = Color(0xFFCCCCCC)  // Light gray cloud
-                )
-
-                // Right bottom cloud
-                val rightCloudPath = Path().apply {
-                    moveTo(width * 0.58f, height * 0.7f)
-
-                    // First bump
-                    cubicTo(
-                        width * 0.62f, height * 0.65f,
-                        width * 0.66f, height * 0.62f,
-                        width * 0.72f, height * 0.62f
-                    )
-
-                    // Second bump
-                    cubicTo(
-                        width * 0.76f, height * 0.62f,
-                        width * 0.8f, height * 0.58f,
-                        width * 0.85f, height * 0.58f
-                    )
-
-                    // Third bump
-                    cubicTo(
-                        width * 0.9f, height * 0.58f,
-                        width * 0.95f, height * 0.65f,
-                        width, height * 0.72f
-                    )
-
-                    lineTo(width, height)
-                    lineTo(width * 0.58f, height)
-                    close()
-                }
-
-                drawPath(
-                    path = rightCloudPath,
-                    color = Color(0xFFB8B8B8)  // Medium gray cloud
-                )
-
-                // Front center cloud (overlapping, darker)
-                val centerCloudPath = Path().apply {
-                    moveTo(width * 0.3f, height * 0.8f)
-
-                    // Large center bumps
-                    cubicTo(
-                        width * 0.35f, height * 0.7f,
-                        width * 0.42f, height * 0.65f,
-                        width * 0.5f, height * 0.65f
-                    )
-
-                    cubicTo(
-                        width * 0.58f, height * 0.65f,
-                        width * 0.65f, height * 0.7f,
-                        width * 0.7f, height * 0.8f
-                    )
-
-                    lineTo(width * 0.7f, height)
-                    lineTo(width * 0.3f, height)
-                    close()
-                }
-
-                drawPath(
-                    path = centerCloudPath,
-                    color = Color(0xFFA0A0A0)  // Darker gray front cloud
+                // Current time - Large display
+                Text(
+                    text = currentTime,
+                    color = Color.White,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
             // Instruction text at bottom
             Text(
-                text = "Connect charger to dismiss",
-                color = Color.White.copy(alpha = 0.6f),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(bottom = 48.dp)
+                text = "Put phone on charge to\nstop alarm",
+                color = Color.White.copy(alpha = 0.85f),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 48.dp)
             )
         }
     }

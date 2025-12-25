@@ -59,7 +59,7 @@ class AlarmService : Service() {
             registerReceiver(chargerReceiver, filter)
         }
 
-        // Acquire wake lock
+        // Acquire wake lock - no timeout, will be released when charger is connected
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK or
@@ -67,7 +67,7 @@ class AlarmService : Service() {
             PowerManager.ON_AFTER_RELEASE,
             "Alarmly::AlarmWakeLock"
         )
-        wakeLock?.acquire(10 * 60 * 1000L) // 10 minutes
+        wakeLock?.acquire() // Acquire indefinitely until charger is connected
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -103,6 +103,7 @@ class AlarmService : Service() {
             }
         }
 
+        // Return START_STICKY to ensure service is restarted if killed by system
         return START_STICKY
     }
 
@@ -184,7 +185,15 @@ class AlarmService : Service() {
 
         val pendingIntent = PendingIntent.getActivity(
             this,
-            alarmId, // Use unique request code per alarm
+            alarmId,
+            notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Full screen intent for immediate display
+        val fullScreenIntent = PendingIntent.getActivity(
+            this,
+            alarmId + 1000,
             notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -194,9 +203,14 @@ class AlarmService : Service() {
             .setContentText("Connect charger to dismiss")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setFullScreenIntent(fullScreenIntent, true) // Show full screen when alarm rings
+            .setOngoing(true) // Makes notification persistent
+            .setAutoCancel(false) // Prevents dismissing by swiping
+            .setPriority(NotificationCompat.PRIORITY_MAX) // Highest priority
             .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // Show on lock screen
+            .setOnlyAlertOnce(false) // Keep alerting
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE) // Show immediately
             .build()
     }
 
@@ -209,6 +223,10 @@ class AlarmService : Service() {
             ).apply {
                 description = "Notifications for active alarms"
                 setSound(null, null)
+                enableLights(true)
+                enableVibration(false) // Vibration handled separately
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                setBypassDnd(true) // Bypass Do Not Disturb
             }
 
             val notificationManager = getSystemService(NotificationManager::class.java)

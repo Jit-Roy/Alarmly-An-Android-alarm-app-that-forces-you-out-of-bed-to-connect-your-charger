@@ -60,7 +60,7 @@ fun AlarmListScreen(
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
-                top = 32.dp,  // Top padding from screen edge
+                top = 64.dp,
                 bottom = 16.dp
             )
         ) {
@@ -183,9 +183,6 @@ fun AlarmHeaderBanner(nextAlarmTime: String) {
                         color = Color.White.copy(alpha = 0.8f)
                     )
                 }
-
-                // Character illustration is already part of the alarm_background image
-                // No separate overlay needed
             }
         }
     }

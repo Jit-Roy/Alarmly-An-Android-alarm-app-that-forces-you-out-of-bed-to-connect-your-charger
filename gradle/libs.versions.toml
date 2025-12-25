@@ -1,6 +1,6 @@
 [versions]
-agp = "8.7.3"
-kotlin = "2.0.20"
+agp = "8.13.2"
+kotlin = "2.0.21"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -10,7 +10,7 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 room = "2.6.1"
 navigation = "2.8.5"
-ksp = "2.0.20-1.0.25"
+ksp = "2.0.21-1.0.25"
 lifecycleViewmodel = "2.8.7"
 workManager = "2.10.0"
 
